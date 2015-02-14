@@ -1,6 +1,6 @@
 package ru.spbau.kozlov.fp;
 
-import ru.spbau.kozlov.fp.operations.BetaReduction;
+import ru.spbau.kozlov.fp.operations.Normalization;
 import ru.spbau.kozlov.fp.terms.Application;
 import ru.spbau.kozlov.fp.terms.ITerm;
 import ru.spbau.kozlov.fp.terms.Lambda;
@@ -15,7 +15,7 @@ public class Main {
 
     public static void main(String[] args) {
         for (ITerm term : TERMS) {
-            System.out.println(new BetaReduction(term));
+            System.out.println(new Normalization(term));
         }
     }
 }

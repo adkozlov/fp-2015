@@ -13,16 +13,11 @@ public class BetaReduction extends AbstractOperation {
 
     @Override
     public ITerm doOperation() {
-        return reduce(getTerm());
+        return getTerm().reduce();
     }
 
     @Override
     public String getOperationSymbol() {
         return "β";
-    }
-
-    private static ITerm reduce(ITerm term) {
-        ITerm reduced = term.reduce();
-        return term.equals(reduced) ? term : reduce(reduced);
     }
 }
