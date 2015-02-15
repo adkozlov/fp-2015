@@ -7,6 +7,8 @@ import ru.spbau.kozlov.fp.terms.ITerm;
  */
 public abstract class AbstractOperation implements IOperation {
 
+    protected final String OUTPUT_FORMAT = " ->%s ";
+
     private final ITerm term;
     private ITerm result;
 
@@ -31,6 +33,6 @@ public abstract class AbstractOperation implements IOperation {
 
     @Override
     public String toString() {
-        return term + " ->" + getOperationSymbol() + " " + getResult();
+        return term + String.format(OUTPUT_FORMAT, getOperationSymbol()) + getResult();
     }
 }

@@ -7,6 +7,8 @@ import ru.spbau.kozlov.fp.terms.ITerm;
  */
 public class BetaReduction extends AbstractOperation {
 
+    public static final String BETA_STRING = "β";
+
     public BetaReduction(ITerm term) {
         super(term);
     }
@@ -18,6 +20,6 @@ public class BetaReduction extends AbstractOperation {
 
     @Override
     public String getOperationSymbol() {
-        return "β";
+        return BETA_STRING;
     }
 }
