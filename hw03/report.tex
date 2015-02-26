@@ -1,0 +1,110 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[english,russian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage{listings,comment,hyperref,listings,verbatim,amssymb}
+\usepackage[nohead]{geometry}
+\usepackage{pgfplots}
+
+\begin{document}
+
+\title{Домашнее задание №3}
+\author{Андрей Козлов}
+\date{\today}
+
+\maketitle
+
+\begin{enumerate}
+\item {
+	\begin{enumerate}
+		\item $\alpha \rightarrow \alpha$
+		\item $\alpha \rightarrow (\alpha \rightarrow \beta) \rightarrow \beta$
+		\item $\alpha \rightarrow \alpha \rightarrow \alpha$
+		\item $(\alpha \rightarrow \beta) \rightarrow ((\beta \rightarrow \alpha) \rightarrow \alpha) \rightarrow \beta$
+		\item {
+			Терм не типизируется.\\
+			Рассмотрим предтерм $(x y) x$, пусть он является термом. Тогда $\exists \Gamma, \sigma \colon \Gamma \vdash (x (y x)) \colon \sigma$.\\
+			Тогда по лемме об инверсии правый подтерм $x$ имеет некий тип $\tau$, а левый подтерм $x y$ тип $\tau \rightarrow \sigma$, то есть $y \colon \alpha, x \colon \alpha \rightarrow \tau \rightarrow \sigma$. Таким образом, тип $\tau =  \alpha \rightarrow \tau \rightarrow \sigma$ является подвыражением себя, что невозможно в силу конечности типа.
+		}
+	\end{enumerate}
+}
+\item
+\item {
+	\begin{enumerate}
+		\item {
+			\begin{lstlisting}[language=Haskell]
+isZero :: Nat -> Bool
+isZero 0 = true
+isZero (suc n) = false
+
+ge :: Nat -> Nat -> Bool
+ge n m = if (isZero (minus m n))
+	then true
+	else false
+			\end{lstlisting}
+		}
+		\item {
+			\begin{lstlisting}[language=Haskell]
+fac :: Nat -> Nat
+fac 0 = suc 0
+fac (suc n) = mul (suc n) (fac n)
+			\end{lstlisting}
+		}
+		\item {
+			\begin{lstlisting}[language=Haskell]
+f :: (Nat -> a) -> Nat -> a
+f g 0 = g (suc 0)
+f g (suc n) = g (f g n)
+
+ack :: Nat -> Nat -> Nat
+ack 0 = suc
+ack (suc m) = f (ack m)
+			\end{lstlisting}
+		}
+	\end{enumerate}
+}
+\item {
+	\begin{enumerate}
+	\item {
+		\begin{itemize}
+			\item $Pair_{\sigma,\tau}$
+			\item $\Gamma \vdash pair_{\sigma,\tau} \colon \sigma \rightarrow \tau \rightarrow Pair_{\sigma,\tau}$
+			\item {
+				\begin{itemize}
+					\item $\Gamma \vdash fst_{\sigma} \colon Pair_{\sigma,\tau} \rightarrow \sigma$
+					\item $\Gamma \vdash snd_{\tau} \colon Pair_{\sigma,\tau} \rightarrow \tau$
+				\end{itemize}
+			}
+			\item {
+				\begin{itemize}
+					\item $\Gamma \vdash$ \texttt{fst (pair x y)} $\rightarrow$ \texttt{x}
+					\item $\Gamma \vdash$ \texttt{snd (pair x y)} $\rightarrow$ \texttt{y}
+				\end{itemize}
+			}
+		\end{itemize}
+	}
+	\item {
+		\begin{itemize}
+			\item $List_{\sigma}$
+			\item {
+				\begin{itemize}
+					\item $\Gamma \vdash nil_{\sigma} \colon List_{\sigma}$
+					\item $\Gamma \vdash cons_{\sigma} \colon \sigma \rightarrow List_{\sigma} \rightarrow List_{\sigma}$
+				\end{itemize}
+			}
+			\item $\Gamma \vdash rec_{List_{\sigma}} \colon \alpha \rightarrow (\sigma \rightarrow List_{\sigma} \rightarrow \alpha) \rightarrow List_{\sigma} \rightarrow \alpha$
+			\item {
+				\begin{itemize}
+					\item $\Gamma \vdash$ \texttt{rec} $_{List_{\sigma}}$ \texttt{n c nil} $\rightarrow$ \texttt{n}
+					\item $\Gamma \vdash$ \texttt{rec} $_{List_{\sigma}}$ \texttt{n c (cons x xs)} $\rightarrow$ \texttt{c x xs (rec n c xs)}
+				\end{itemize}
+			}
+		\end{itemize}
+	}
+	\end{enumerate}
+}
+\item \lstinputlisting[language=Haskell]{sort.hs}
+\end{enumerate}
+
+\end{document}
