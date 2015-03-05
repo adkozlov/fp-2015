@@ -18,10 +18,13 @@
 \begin{enumerate}
 \item {
 	\begin{enumerate}
-		\item $\alpha \rightarrow \alpha$
+		\item $\alpha \rightarrow \alpha$ \\
+            \textcolor{red}{Терм вида $\lambda x y.\ \ldots$ всегда имеет тип вида $\sigma \to \tau \to \ldots$}
 		\item $\alpha \rightarrow (\alpha \rightarrow \beta) \rightarrow \beta$
 		\item $\alpha \rightarrow \alpha \rightarrow \alpha$
+            \textcolor{red}{Это не наиболее общий тип}
 		\item $(\alpha \rightarrow \beta) \rightarrow ((\beta \rightarrow \alpha) \rightarrow \alpha) \rightarrow \beta$
+            \textcolor{red}{Типы не сходятся}
 		\item {
 			Терм не типизируется.\\
 			Рассмотрим предтерм $(x y) x$, пусть он является термом. Тогда $\exists \Gamma, \sigma \colon \Gamma \vdash (x (y x)) \colon \sigma$.\\
@@ -30,7 +33,9 @@
 	\end{enumerate}
 }
 \item
-\item {
+\item
+\textcolor{red}{Нужно использовать rec}
+{
 	\begin{enumerate}
 		\item {
 			\begin{lstlisting}[language=Haskell]
@@ -85,6 +90,7 @@ ack (suc m) = f (ack m)
 		\end{itemize}
 	}
 	\item {
+\textcolor{red}{У rec неправильный тип}
 		\begin{itemize}
 			\item $List_{\sigma}$
 			\item {
@@ -104,7 +110,9 @@ ack (suc m) = f (ack m)
 	}
 	\end{enumerate}
 }
-\item \lstinputlisting[language=Haskell]{sort.hs}
+\item
+\textcolor{red}{Нужно использовать rec}
+\lstinputlisting[language=Haskell]{sort.hs}
 \end{enumerate}
 
 \end{document}
