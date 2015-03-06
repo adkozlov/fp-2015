@@ -32,38 +32,39 @@
 }
 \item
 \item
-\textcolor{red}{Нужно использовать rec}
 {
 	\begin{enumerate}
 		\item {
 			\begin{lstlisting}[language=Haskell]
-isZero :: Nat -> Bool
-isZero 0 = True
-isZero (suc n) = False
+false :: Nat -> Bool -> Bool
+false n _ = False
+
+isZero :: Nat -> Bool -> Bool
+isZero n _ = rec True false n
 
 ge :: Nat -> Nat -> Bool
-ge n m = if (isZero (minus m n))
-	then True
-	else False
+ge n m = rec True isZero (minus m n)
 			\end{lstlisting}
 		}
 		\item {
 			\begin{lstlisting}[language=Haskell]
-fac :: Nat -> Nat
-fac 0 = suc 0
-fac (suc n) = mul (suc n) (fac n)
-			\end{lstlisting}
-		}
-		\item {
-			\begin{lstlisting}[language=Haskell]
-f :: (Nat -> a) -> Nat -> a
-f g 0 = g (suc 0)
-f g (suc n) = g (f g n)
+multSucc :: Nat -> (Nat -> Nat)
+multSucc n = mul (succ n)
 
-ack :: Nat -> Nat -> Nat
-ack 0 = suc
-ack (suc m) = f (ack m)
+fac :: Nat -> Nat
+fac = rec 1 multSucc
 			\end{lstlisting}
+		}
+		\item {
+%			\begin{lstlisting}[language=Haskell]
+%f :: (Nat -> a) -> Nat -> a
+%f g 0 = g (suc 0)
+%f g (suc n) = g (f g n)
+%
+%ack :: Nat -> Nat -> Nat
+%ack 0 = suc
+%ack (suc m) = f (ack m)
+%			\end{lstlisting}
 		}
 	\end{enumerate}
 }
@@ -108,7 +109,7 @@ ack (suc m) = f (ack m)
 	\end{enumerate}
 }
 \item
-\lstinputlisting[language=Haskell,firstline=4]{sort.hs}
+\lstinputlisting[language=Haskell]{sort.hs}
 \end{enumerate}
 
 \end{document}
