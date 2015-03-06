@@ -18,13 +18,11 @@
 \begin{enumerate}
 \item {
 	\begin{enumerate}
-		\item $\alpha \rightarrow \alpha$ \\
-            \textcolor{red}{Терм вида $\lambda x y.\ \ldots$ всегда имеет тип вида $\sigma \to \tau \to \ldots$}
+		\item $(\alpha \rightarrow \beta) \rightarrow \alpha \rightarrow \beta$
 		\item $\alpha \rightarrow (\alpha \rightarrow \beta) \rightarrow \beta$
 		\item $\alpha \rightarrow \alpha \rightarrow \alpha$
             \textcolor{red}{Это не наиболее общий тип}
-		\item $(\alpha \rightarrow \beta) \rightarrow ((\beta \rightarrow \alpha) \rightarrow \alpha) \rightarrow \beta$
-            \textcolor{red}{Типы не сходятся}
+		\item $(\alpha \rightarrow \beta) \rightarrow ((\alpha \rightarrow \beta) \rightarrow \alpha) \rightarrow \beta$
 		\item {
 			Терм не типизируется.\\
 			Рассмотрим предтерм $(x y) x$, пусть он является термом. Тогда $\exists \Gamma, \sigma \colon \Gamma \vdash (x (y x)) \colon \sigma$.\\
@@ -40,13 +38,13 @@
 		\item {
 			\begin{lstlisting}[language=Haskell]
 isZero :: Nat -> Bool
-isZero 0 = true
-isZero (suc n) = false
+isZero 0 = True
+isZero (suc n) = False
 
 ge :: Nat -> Nat -> Bool
 ge n m = if (isZero (minus m n))
-	then true
-	else false
+	then True
+	else False
 			\end{lstlisting}
 		}
 		\item {
@@ -90,7 +88,6 @@ ack (suc m) = f (ack m)
 		\end{itemize}
 	}
 	\item {
-\textcolor{red}{У rec неправильный тип}
 		\begin{itemize}
 			\item $List_{\sigma}$
 			\item {
@@ -99,7 +96,7 @@ ack (suc m) = f (ack m)
 					\item $\Gamma \vdash cons_{\sigma} \colon \sigma \rightarrow List_{\sigma} \rightarrow List_{\sigma}$
 				\end{itemize}
 			}
-			\item $\Gamma \vdash rec_{List_{\sigma}} \colon \alpha \rightarrow (\sigma \rightarrow List_{\sigma} \rightarrow \alpha) \rightarrow List_{\sigma} \rightarrow \alpha$
+			\item $\Gamma \vdash rec_{List_{\sigma}} \colon \alpha \rightarrow (\sigma \rightarrow List_{\sigma} \rightarrow \alpha \rightarrow \alpha) \rightarrow List_{\sigma} \rightarrow \alpha$
 			\item {
 				\begin{itemize}
 					\item $\Gamma \vdash$ \texttt{rec} $_{List_{\sigma}}$ \texttt{n c nil} $\rightarrow$ \texttt{n}
@@ -111,8 +108,7 @@ ack (suc m) = f (ack m)
 	\end{enumerate}
 }
 \item
-\textcolor{red}{Нужно использовать rec}
-\lstinputlisting[language=Haskell]{sort.hs}
+\lstinputlisting[language=Haskell,firstline=4]{sort.hs}
 \end{enumerate}
 
 \end{document}
