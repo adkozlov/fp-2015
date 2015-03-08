@@ -31,10 +31,10 @@
 }
 \item {
 	\begin{enumerate}
-		\item $\lambda f g . f (\lambda a . g a)$, $\lambda f g . f (g (f (\lambda a . g a)))$, $\lambda f g . f ( g (f (g (f (\lambda a . g a)))))$
-		\item $\lambda f g . g (f (\lambda a . g a)) (f (\lambda a . g a))$
-		\item $\lambda f g . f g$
-		\item $\lambda f . f (\lambda g . g (\lambda i . i))$
+		\item $\lambda f g . f (\lambda a . g a a)$, $\lambda f g . f (g (f (\lambda a . g a a)))$, $\lambda f g . f (g (f (g (f (\lambda a . g a a)))))$
+		\item $\lambda f g . g (f (\lambda a . g a a)) (f (\lambda a . g a a))$
+		\item $\lambda f g . g (\lambda a . f a)$
+		\item $\lambda f . f (\lambda g_1 . g_1 (\lambda a . f (\lambda g_2 . a)))$
 	\end{enumerate}
 }
 \item
