@@ -20,8 +20,7 @@
 	\begin{enumerate}
 		\item $(\alpha \rightarrow \beta) \rightarrow \alpha \rightarrow \beta$
 		\item $\alpha \rightarrow (\alpha \rightarrow \beta) \rightarrow \beta$
-		\item $\alpha \rightarrow \alpha \rightarrow \alpha$
-            \textcolor{red}{Это не наиболее общий тип}
+		\item $\alpha \rightarrow \beta \rightarrow \beta$
 		\item $(\alpha \rightarrow \beta) \rightarrow ((\alpha \rightarrow \beta) \rightarrow \alpha) \rightarrow \beta$
 		\item {
 			Терм не типизируется.\\
@@ -30,7 +29,14 @@
 		}
 	\end{enumerate}
 }
-\item
+\item {
+	\begin{enumerate}
+		\item $\lambda f g . f (\lambda a . g a)$, $\lambda f g . f (g (f (\lambda a . g a)))$, $\lambda f g . f ( g (f (g (f (\lambda a . g a)))))$
+		\item $\lambda f g . g (f (\lambda a . g a)) (f (\lambda a . g a))$
+		\item $\lambda f g . f g$
+		\item $\lambda f . f (\lambda g . g (\lambda i . i))$
+	\end{enumerate}
+}
 \item
 {
 	\begin{enumerate}
