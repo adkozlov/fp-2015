@@ -19,3 +19,9 @@ multSucc n = (* (n + 1))
 
 fac :: Integer -> Integer
 fac = rec 1 multSucc
+
+ack :: Integer -> Integer -> Integer
+ack = rec (+ 1) (\n r -> iter (\ a b -> r b))
+
+iter :: (Integer -> Integer -> Integer) -> Integer -> Integer
+iter s n = rec (s 0 1) s n

@@ -62,15 +62,13 @@ fac = rec 1 multSucc
 			\end{lstlisting}
 		}
 		\item {
-%			\begin{lstlisting}[language=Haskell]
-%f :: (Nat -> a) -> Nat -> a
-%f g 0 = g (suc 0)
-%f g (suc n) = g (f g n)
-%
-%ack :: Nat -> Nat -> Nat
-%ack 0 = suc
-%ack (suc m) = f (ack m)
-%			\end{lstlisting}
+			\begin{lstlisting}[language=Haskell]
+ack :: Nat -> Nat-> Nat
+ack = rec succ (\n r -> iter (\ a b -> r b))
+
+iter :: (Nat -> Nat -> Nat) -> Nat -> Nat
+iter s n = rec (s 0 1) s n
+			\end{lstlisting}
 		}
 	\end{enumerate}
 }
