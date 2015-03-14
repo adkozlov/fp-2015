@@ -47,7 +47,8 @@ fibs = map fst $ iterate (\(a, b) -> (b, a + b)) (1, 1)
 -- (1 балл)
 isPrime :: Integer -> Bool
 isPrime = null . filter (== True) . isPrime' where
-                                    isPrime' n = [n `mod` x == 0 | x <- [2..(n - 1)]]
+                                    isPrime' n | n == 1 = [True]
+                                               | otherwise = [n `mod` x == 0 | x <- [2..(n - 1)]]
 
 -- primes возвращает бесконечный список простых чисел.
 primes :: [Integer]
@@ -85,7 +86,10 @@ takeLast n xs = drop (length xs - n) xs
 -- Заметьте, что в функцию f никогда не передаются пустые списки.
 -- (1 балл)
 mapl :: (a -> Bool) -> ([a] -> b) -> [a] -> [b]
-mapl p f xs = map f . filter (not . null) $ undefined
+mapl p f xs = mapAndConcat p f (span p xs)
+              where mapAndConcat p f ([], []) = []
+                    mapAndConcat p f ([], y:ys) = mapl p f ys
+                    mapAndConcat p f (firstGroup, ys) = (f firstGroup):(mapl p f ys)
 
 -- 9. Напишите аналоги функций unlines и unwords, используя функцию intercalate.
 --    Заметьте, что функция unlines' работает чуть иначе, чем unlines.
