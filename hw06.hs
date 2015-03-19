@@ -8,28 +8,28 @@ import Test.HUnit
 data Complex = Complex { real :: Double, im :: Double } deriving (Show, Eq)
 
 fromDouble :: Double -> Complex
-fromDouble = undefined
+fromDouble d = Complex d 0
 
 -- Мнимая единица
 i :: Complex
-i = undefined
+i = Complex 0 1
 
 infixl 6 +., -.
 (+.) :: Complex -> Complex -> Complex
-(+.) = undefined
+(+.) (Complex re1 im1) (Complex re2 im2) = Complex (re1 + re2) (im1 + im2)
 
 (-.) :: Complex -> Complex -> Complex
-(-.) = undefined
+(-.) (Complex re1 im1) (Complex re2 im2) = Complex (re1 - re2) (im1 - im2)
 
 infixl 7 *., /.
 (*.) :: Complex -> Complex -> Complex
-(*.) = undefined
+(*.) (Complex re1 im1) (Complex re2 im2) = Complex (re1 * re2 - im1 * im2) (re2 * im1 + re1 * im2)
 
 (/.) :: Complex -> Complex -> Complex
-(/.) = undefined
+(/.) (Complex re1 im1) (Complex re2 im2) = Complex ((re1 * re2 + im1 * im2) / r) ((re2 * im1 - re1 * im2) / r) where r = re2 ** 2 + im2 ** 2
 
 conj :: Complex -> Complex
-conj = undefined
+conj (Complex re im) = Complex re (-im)
 
 -- tests
 
@@ -49,19 +49,30 @@ data Tree a = Node { value :: a, children :: [Tree a] }
 
 -- (a) Возвращает высоту дерева
 height :: Tree a -> Int
-height = undefined
+height (Node _ []) = 1
+height (Node _ c) = 1 + (maximum (map height c))
 
 -- (b) Возвращает среднее арифметическое значений во всех узлах дерева
 -- Необходимо вычислить эту функцию, выполнив один проход по дереву
 avg :: Tree Int -> Int
-avg = undefined
+avg t = (fst result) `div` (snd result) where result = avg' t
+
+avg' :: Tree Int -> (Int, Int)
+avg' (Node v []) = (v, 1)
+avg' (Node v c) = (v + (sum (map fst result)), 1 + (sum (map snd result))) where result = map avg' c
 
 -- (c) Возвращает ширину дерева
 -- Ширина дерева определяется следующим образом:
 -- Количество вершин на определенном уровне называется шириной уровня.
 -- Ширина дерева - это максимальная ширина уровня по всем уровням.
 width :: Tree a -> Int
-width = undefined
+width = fst . width'
+
+width' :: Tree a -> (Int, Int)
+width' (Node _ c) = (lenOrWidth c, length c)
+
+lenOrWidth :: [Tree a] -> Int
+lenOrWidth c = max (length c) $ sum $ map (snd . width') c
 
 -- tests
 
@@ -166,19 +177,43 @@ testsExpr = [ errorsCount (evalExpr M.empty expr1) ~?= 1
 data Map k v = Leaf | Branch k v (Map k v) (Map k v)
 
 lookup :: Ord k => k -> Map k v -> Maybe v
-lookup = undefined
+lookup _ Leaf = Nothing
+lookup x (Branch k v left right) | x < k = lookup x left
+                                 | x == k = Just v
+                                 | otherwise = lookup x right
 
 insert :: Ord k => k -> v -> Map k v -> (Map k v, Maybe v)
-insert = undefined
+insert k v Leaf = (Branch k v Leaf Leaf, Just v)
+insert x y (Branch k v left right) | x < k = let result = insert x y left in (Branch k v (fst result) right, snd result)
+                                   | x == k = (Branch k v left right, Nothing)
+                                   | otherwise = let result = insert x y right in (Branch k v left (fst result), snd result)
 
 delete :: Ord k => k -> Map k v -> Maybe (Map k v)
-delete = undefined
+delete _ Leaf = Nothing
+delete x (Branch k v left right) | x < k = Just $ Branch k v (fromMaybe (delete x left)) right
+                                 | x == k = Just $ deleteRoot (Branch k v left right)
+                                 | otherwise = Just $ Branch k v left $ fromMaybe $ delete x right
+
+fromMaybe :: Maybe (Map k v) -> (Map k v)
+fromMaybe Nothing = Leaf
+fromMaybe (Just m) = m
+
+deleteRoot :: Ord k => Map k v -> Map k v
+deleteRoot (Branch _ _ Leaf right) = right
+deleteRoot (Branch _ _ left Leaf) = left
+deleteRoot (Branch _ _ left right) = Branch (fst result) (snd result) left right where result = leftist right
+
+leftist :: Ord k => Map k v -> (k, v)
+leftist (Branch k v Leaf right) = (k, v)
+leftist (Branch _ _ left _) = leftist left
 
 fromList :: Ord k => [(k, v)] -> Map k v
-fromList = undefined
+fromList [] = Leaf
+fromList ((k, v):xs) = fst $ insert k v $ fromList xs
 
 toList :: Map k v -> [(k, v)]
-toList = undefined
+toList Leaf = []
+toList (Branch k v left right) = toList left ++ [(k, v)] ++ toList right
 
 -- tests
 
