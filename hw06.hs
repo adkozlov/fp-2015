@@ -66,13 +66,10 @@ avg' (Node v c) = (v + (sum (map fst result)), 1 + (sum (map snd result))) where
 -- Количество вершин на определенном уровне называется шириной уровня.
 -- Ширина дерева - это максимальная ширина уровня по всем уровням.
 width :: Tree a -> Int
-width = fst . width'
-
-width' :: Tree a -> (Int, Int)
-width' (Node _ c) = (lenOrWidth c, length c)
-
-lenOrWidth :: [Tree a] -> Int
-lenOrWidth c = max (length c) $ sum $ map (snd . width') c
+width = lenOrWidth . children
+  where
+    lenOrWidth :: [Tree a] -> Int
+    lenOrWidth c = max (length c) $ sum $ map (length . children) c
 
 -- tests
 
