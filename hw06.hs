@@ -134,34 +134,46 @@ type Error = String
 -- Ошибки бывают двух видов: необъявленная переменная и несоответствие типов.
 -- Возвращается список ошибок, т.к. выражение может содержать больше одной ошибки.
 evalExpr :: M.Map String Value -> Expr -> Either [Error] Value
-evalExpr m (BinOp operation firstExpression secondExpression) = either Left (\value -> either Left (apply operation value) $ evalExpr m secondExpression) $ evalExpr m firstExpression where
-                                                                                                    apply Plus (I int1) (I int2) = Right $ I $ int1 + int2
-                                                                                                    apply Mul (I int1) (I int2) = Right $ I $ int1 * int2
-                                                                                                    apply Minus (I int1) (I int2) = Right $ I $ int1 - int2
-                                                                                                    apply Less (I int1) (I int2) = Right $ B $ int1 < int2
-                                                                                                    apply Greater (I int1) (I int2) = Right $ B $ int1 > int2
-                                                                                                    apply Equals (I int1) (I int2) = Right $ B $ int1 == int2
-                                                                                                    apply _ _ _ = Left ["type mismatch"]
-evalExpr m (UnOp operation expression) = either Left (apply operation) $ evalExpr m expression where
-                                                      apply Neg (I int) = Right $ I $ -int
-                                                      apply Not (B bool) = Right $ B $ not bool
-                                                      apply _ _ = Left ["type mismatch"]
+--
+-- Зачем такие длинные имена у локальных переменных?
+-- И зачем всё писать в одну строчку?
+--
+evalExpr m (BinOp op e1 e2) = case evalExpr m e1 of
+    Left errs -> Left errs
+    Right value -> either Left (apply op value) (evalExpr m e2) where
+                                apply Plus (I int1) (I int2) = Right $ I $ int1 + int2
+                                apply Mul (I int1) (I int2) = Right $ I $ int1 * int2
+                                apply Minus (I int1) (I int2) = Right $ I $ int1 - int2
+                                apply Less (I int1) (I int2) = Right $ B $ int1 < int2
+                                apply Greater (I int1) (I int2) = Right $ B $ int1 > int2
+                                apply Equals (I int1) (I int2) = Right $ B $ int1 == int2
+                                apply _ _ _ = Left ["type mismatch"]
+evalExpr m (UnOp op e) = either Left (apply op) (evalExpr m e) where
+                                      apply Neg (I int) = Right $ I $ -int
+                                      apply Not (B bool) = Right $ B $ not bool
+                                      apply _ _ = Left ["type mismatch"]
 evalExpr m (Const value) = Right value
-evalExpr m (If conditionExpression thenExpression elseExpression) = either Left apply $ evalExpr m conditionExpression where
-                                                                                apply (B True) = evalExpr m thenExpression
-                                                                                apply (B False) = evalExpr m elseExpression
-                                                                                apply _ = Left ["type mismatch"]
-evalExpr m (Var string) = maybe (Left ["variable is not declared: " ++ string]) Right $ M.lookup string m
+evalExpr m (If cond thenExpr elseExpr) = either Left apply (evalExpr m cond) where
+                                                     apply (B True) = evalExpr m thenExpr
+                                                     apply (B False) = evalExpr m elseExpr
+                                                     apply _ = Left ["type mismatch"]
+evalExpr m (Var s) = maybe (Left ["variable is not declared: " ++ string]) Right (M.lookup s m)
 
 -- evalStatement принимает текущее значение переменных и statement и возвращает новое значение переменных после его выполнения.
 evalStatement :: M.Map String Value -> Statement -> Either [Error] (M.Map String Value)
-evalStatement m (Assign string expression) = either Left (\value -> Right $ M.insert string value m) $ evalExpr m expression
-evalStatement m (While expression statement) = either Left execute $ evalExpr m expression where
-                                                           execute (B True) = either Left (\context -> evalStatement context $ While expression statement) $ evalStatement m statement
-                                                           execute (B False) = Right m
-                                                           execute _ = Left ["type mismatch"]
+evalStatement m (Assign var e) = case evalExpr m e of
+    Left errs -> Left errs
+    Right value -> Right (M.insert var value m)
+evalStatement m e@(While cond statement) = either Left execute (evalExpr m cond) where
+                                                       execute (B True) = case evalStatement m statement of
+                                                                            Left errs -> Left errs
+                                                                            Right m' -> evalStatement m' e
+                                                       execute (B False) = Right m
+                                                       execute _ = Left ["type mismatch"]
 evalStatement m (Compound []) = Right m
-evalStatement m (Compound (x:xs)) = either Left (\context -> evalStatement context $ Compound xs) $ evalStatement m x
+evalStatement m (Compound (x:xs)) = case evalStatement m x of
+    Left errs -> Left errs
+    Right context -> evalStatement context (Compound xs)
 
 -- tests
 
