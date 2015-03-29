@@ -16,7 +16,7 @@ class MapLike m where
     fromList :: Ord k => [(k, v)] -> m k v
     fromList l = fromList' l empty where
     	         fromList' [] acc = acc
-    	         fromList' ((k, v):xs) = fromList' xs $ insert k v acc
+    	         fromList' ((k, v):xs) acc = fromList' xs $ insert k v acc
 
 -- 2. Определить instance MapLike для Data.Map, ListMap и ArrMap
 --    Можно использовать любые стандартные функции.
@@ -39,7 +39,7 @@ instance MapLike ListMap where
 
 newtype ArrMap k v = ArrMap (k -> Maybe v)
 
-instance M ArrMap where
+instance MapLike ArrMap where
     empty = ArrMap (\ _ -> Nothing)
     lookup k (ArrMap a) = a k
     insert k v (ArrMap a) = ArrMap (\l -> if k == l then Just v else a l)
@@ -47,8 +47,8 @@ instance M ArrMap where
 
 -- 3. Написать instace Functor для ListMap k и ArrMap k.
 
-instance Functor ListMap where
+instance Functor (ListMap k) where
     fmap f (ListMap l) = ListMap $ map (\(k, v) -> (k, f v)) l
 
-instance Functor ArrMap where
+instance Functor (ArrMap k) where
     fmap f (ArrMap a) = ArrMap $ (\k -> maybe Nothing (Just . f) $ a k)
