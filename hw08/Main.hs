@@ -159,7 +159,7 @@ main = fmap (const ()) $ runTestTT $ test
     ] ++ label "treeP"
     [ parserTestOK   (treeP integer integer) "100"            === (Leaf 100, "")
     , parserTestOK   (treeP integer integer) "<1{2}3>"        === (Node (Leaf 1) 2 (Leaf 3), "")
-    , parserTestOK   (treeP integer integer) "<1{2}<3{4}5>>>" === (Node (Leaf 1) 2 (Node (Leaf 3) 4 (Leaf 5)), "")
+    , parserTestOK   (treeP integer integer) "<1{2}<3{4}5>>>" === (Node (Leaf 1) 2 (Node (Leaf 3) 4 (Leaf 5)), ">")
     , parserTestFail (treeP integer integer) "<1{2}<3{4}5>"
     ] ++ label "foldl1P"
     [ parserTestOK   (foldl1P (\a b c -> a ++ "[" ++ show b ++ "]" ++ c) (many $ satisfy $ not . isDigit) digit) "a1bcd5efg853h" === ("a[1]bcd[5]efg[8][5][3]h", "")
