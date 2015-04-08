@@ -100,8 +100,12 @@ angles = between (symbol '<') (symbol '>')
 
 -- (1 балл)
 foldr1P :: (a -> b -> a -> a) -> Parser lex a -> Parser lex b -> Parser lex a
-foldr1P = undefined
+foldr1P f pa pb = wrapper <$> pa <*> many ((,) <$> pb <*> pa) where
+    wrapper s ((b, a):[]) = f s b a
+    wrapper s ((b, a):xs) = f s b $ wrapper a xs
 
 -- (1 балл)
 foldl1P :: (a -> b -> a -> a) -> Parser lex a -> Parser lex b -> Parser lex a
-foldl1P = undefined
+foldl1P f pa pb = wrapper <$> pa <*> many ((,) <$> pb <*> pa) where
+    wrapper s ((b, a):[]) = f s b a
+    wrapper s ((b, a):xs) = wrapper (f s b a) xs
