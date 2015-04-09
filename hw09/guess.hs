@@ -1,4 +1,5 @@
 import System.Random(randomRIO)
+import Control.Monad
 
 {-
 Реализуйте следующую программу.
@@ -8,5 +9,15 @@ import System.Random(randomRIO)
 (1.5 балла)
 -}
 
+try :: Int -> Int -> IO ()
+try r 5 = putStrLn ("You loose, the number is: " ++ show r)
+try r i = liftM (read :: String -> Int) getLine >>= \ n -> case compare r n of
+	LT -> putStrLn ">" >> try r (i + 1)
+	EQ -> putStrLn "You win"
+	GT -> putStrLn "<" >> try r (i + 1)
+
 main :: IO ()
-main = undefined
+main = do	
+	r <- randomRIO (1,100) :: IO Int
+	putStrLn $ "Try to guess the number" ++ show r	
+	try r 0
