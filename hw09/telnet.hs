@@ -1,4 +1,5 @@
 import Network
+import System.IO
 import Control.Concurrent(forkIO)
 
 {-
@@ -7,5 +8,14 @@ import Control.Concurrent(forkIO)
 (2 балла)
 -}
 
+handleConnection :: Handle -> IO ()
+handleConnection c = do
+	l <- getLine
+	hPutStrLn c l
+	l <- hGetLine c
+	putStrLn l
+	handleConnection c
+
+
 main :: IO ()
-main = undefined
+main = withSocketsDo $ connectTo "127.0.0.1" (PortNumber 12345) >>= handleConnection

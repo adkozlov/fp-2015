@@ -19,5 +19,5 @@ try r i = liftM (read :: String -> Int) getLine >>= \ n -> case compare r n of
 main :: IO ()
 main = do	
 	r <- randomRIO (1,100) :: IO Int
-	putStrLn $ "Try to guess the number" ++ show r	
+	putStrLn $ "Try to guess the number"	
 	try r 0
