@@ -8,17 +8,14 @@ import Control.Concurrent(forkIO)
 (2 балла)
 -}
 
-run :: Handle -> IO ()
-run h = hGetLine h >>= putStrLn
+handleConnectionIn :: Handle -> IO ()
+handleConnectionIn h = hGetLine h >>= putStrLn >> handleConnectionIn h
 
-
-handleConnection :: Handle -> IO ()
-handleConnection h = do
-	l <- getLine
-	hPutStrLn h l
-	forkIO $ run h
-	handleConnection h
-
+handleConnectionOut :: Handle -> IO ()
+handleConnectionOut h = getLine >>= hPutStrLn h >> handleConnectionOut h
 
 main :: IO ()
-main = withSocketsDo $ connectTo "127.0.0.1" (PortNumber 12345) >>= handleConnection
+main = withSocketsDo $ do
+	h <- connectTo "127.0.0.1" (PortNumber 12345)
+	forkIO $ handleConnectionOut h
+	handleConnectionIn h
