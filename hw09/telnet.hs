@@ -8,13 +8,16 @@ import Control.Concurrent(forkIO)
 (2 балла)
 -}
 
+run :: Handle -> IO ()
+run h = hGetLine h >>= putStrLn
+
+
 handleConnection :: Handle -> IO ()
-handleConnection c = do
+handleConnection h = do
 	l <- getLine
-	hPutStrLn c l
-	l <- hGetLine c
-	putStrLn l
-	handleConnection c
+	hPutStrLn h l
+	forkIO $ run h
+	handleConnection h
 
 
 main :: IO ()
