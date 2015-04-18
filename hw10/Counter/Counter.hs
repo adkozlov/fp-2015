@@ -6,12 +6,16 @@ module Counter
     ) where
 
 -- Монада Counter считает количество тиков, т.е. вызовов функции tick
-data Counter a = Counter Int a
+data Counter a = Counter Int a deriving Show
 
 -- Возвращает результат вычислений и количество тиков
 runCounter :: Counter a -> (a, Int)
-runCounter = undefined
+runCounter (Counter i x) = (x, i)
 
 instance Monad Counter where
-    return = undefined
-    (>>=) = undefined
+    return = Counter 0
+    (Counter i x) >>= f = case f x of
+    	Counter j y -> Counter (i + j) y
+
+tick :: Counter ()
+tick = Counter 1 ()
