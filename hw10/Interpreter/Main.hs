@@ -9,19 +9,56 @@ import Expr
 import Eval
 
 getInt :: Eval Value -> Eval Integer
-getInt m = undefined
+getInt m = m >>= handle where
+    handle (I i) = return i
+    handle _ = fail "type mismatch, expected type: Int"
 
 getBool :: Eval Value -> Eval Bool
-getBool m = undefined
+getBool m = m >>= handle where
+    handle (B b) = return b
+    handle _ = fail "type mismatch, expected type: Bool"
 
 if' :: Eval Value -> Eval () -> Maybe (Eval ()) -> Eval ()
-if' c t e = undefined
+if' c t e = getBool c >>= if'' t e
+
+if'' t (Just e) b = if b then t else e
+if'' t Nothing b = when b t
+
+getIntValue e = getInt $ evalExpr e
+getBoolValue e = getBool $ evalExpr e
+
+eval' l r c o = do
+    l' <- getIntValue l
+    r' <- getIntValue r
+    return $ c (l' `o` r')
+
+eval'' l r o = do
+    l' <- getBoolValue l
+    r' <- getBoolValue r
+    return $ B (l' `o` r')
 
 evalExpr :: Expr -> Eval Value
-evalExpr = undefined
+evalExpr (Const c) = return c
+evalExpr (Var v) = getVar v
+evalExpr (BinOp Plus l r) = eval' l r I (+)
+evalExpr (BinOp Minus l r) = eval' l r I (-)
+evalExpr (BinOp Mul l r) = eval' l r I (*)
+evalExpr (BinOp And l r) = eval'' l r (&&)
+evalExpr (BinOp Or l r) = eval'' l r (||)
+evalExpr (BinOp Less l r) = eval' l r B (<)
+evalExpr (BinOp Greater l r) = eval' l r B (>)
+evalExpr (BinOp Equals l r) = eval' l r B (==)
+evalExpr (UnOp Neg r) = liftM (I . negate) $ getIntValue r
+evalExpr (UnOp Not r) = liftM (B . not) $ getBoolValue r
 
 evalStatement :: Statement -> Eval ()
-evalStatement = undefined
+evalStatement (Compound []) = return ()
+evalStatement (Compound (s:ss)) = evalStatement s >> evalStatement (Compound ss)
+evalStatement (While e s) = if' (evalExpr e) (evalStatement s >> evalStatement (While e s)) Nothing
+evalStatement (Assign s e) = do
+    e' <- evalExpr e
+    update s e'
+evalStatement (If e s s') = if' (evalExpr e) (evalStatement s) (fmap evalStatement s')
 
 ------------------------------------------------------------------------------------------------
 -- tests
