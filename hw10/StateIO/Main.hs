@@ -12,13 +12,27 @@ import StateIO
 
 -- Эти instance можно реализовать, используя реализацию MonadState
 instance MonadReader s (StateIO s) where
-    ask = undefined
-    local = undefined
+    ask = get
+    local f m = do
+        x <- get        
+        modify f        
+        y <- m
+        put x
+        return y
 
 instance Monoid s => MonadWriter s (StateIO s) where
-    tell w = undefined
-    listen m = undefined
-    pass m = undefined
+    tell w = do
+        x <- get
+        put $ mappend x w
+    listen m = do
+        x <- get
+        y <- m
+        return (y, x)
+    pass m = do
+        x <- get
+        (r, f) <- m
+        put $ f x
+        return r
 
 -- tests
 

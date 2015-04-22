@@ -18,7 +18,6 @@ tree2r = Node ("a",1) (Node ("q",0) Leaf Leaf) (Node ("x",3) (Node ("s",2) Leaf 
 -- 2. Напишите while.
 -- (1 балл)
 while :: Monad m => m Bool -> m a -> m [a]
---while :: IO Bool -> IO Int -> IO [Int]
 while m x = do
     b <- m
     y <- x
