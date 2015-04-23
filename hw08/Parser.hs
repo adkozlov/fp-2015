@@ -1,4 +1,4 @@
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+--{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 
 -- Список экспорта менять нельзя!
 module Parser
@@ -14,14 +14,14 @@ module Parser
 import Control.Applicative
 import Test.HUnit
 import Data.Foldable(toList)
-import Control.Monad.State
-import Control.Monad.Error
-import Control.Monad.Identity
+--import Control.Monad.State
+--import Control.Monad.Error
+--import Control.Monad.Identity
 
---type Error = Either String -- Можно заменить на Maybe, если есть желание.
---newtype Parser lex a = Parser { runParser :: [lex] -> Error (a, [lex]) }
+type Error = Either String -- Можно заменить на Maybe, если есть желание.
+newtype Parser lex a = Parser { runParser :: [lex] -> Error (a, [lex]) }
 
-newtype Parser lex a = Parser { runParser :: StateT [lex] (ErrorT String Identity) a } deriving (Monad,Functor,Applicative,Alternative)
+--newtype Parser lex a = Parser { runParser :: StateT [lex] (ErrorT String Identity) a } deriving (Monad,Functor,Applicative,Alternative)
 
 -- (0.5 балла)
 evalParser :: Parser lex a -> [lex] -> Error a
