@@ -1,5 +1,6 @@
 import Test.HUnit
 import Data.IORef
+import qualified Control.Monad.State as S
 
 -- 1. Функция tagTree должна нумеровать узлы в дереве следующим образом:
 -- В пронумерованном дереве должны встречаться все числа от 0 до (n - 1) ровно по одному разу, где n - число узлов в дереве.
@@ -8,7 +9,16 @@ import Data.IORef
 data Tree a = Node a (Tree a) (Tree a) | Leaf deriving (Eq,Show)
 
 tagTree :: Tree a -> Tree (a, Int)
-tagTree = undefined
+tagTree t = S.evalState (tagTree' t) 0
+
+tagTree' :: Tree a -> S.State Int (Tree (a, Int))
+tagTree' Leaf = return Leaf
+tagTree' (Node e l r) = do
+    newL <- tagTree' l
+    tag <- S.get
+    S.put $ tag + 1
+    newR <- tagTree' r
+    return $ Node (e, tag) newL newR
 
 tree1  = Node "a"     (Node "q"     (Node "t"     Leaf Leaf) (Node "r"     Leaf Leaf)) (Node "x"     Leaf Leaf)
 tree1r = Node ("a",3) (Node ("q",1) (Node ("t",0) Leaf Leaf) (Node ("r",2) Leaf Leaf)) (Node ("x",4) Leaf Leaf)
