@@ -14,23 +14,40 @@ module Parser
 import Control.Applicative
 import Control.Monad.State
 import Control.Monad.Error
+import Control.Monad.Identity
 import Test.HUnit((~?=),Test(TestCase),assertBool)
 
 -- Реализуйте Parser, используя трансформеры монад.
-newtype Parser lex a = Parser ? -- напишите сами
+newtype Parser lex a = Parser { run :: StateT [lex] (ErrorT String Identity) a} -- напишите сами
     deriving (Functor, Applicative, Alternative, Monad, MonadPlus)
 
 runParser :: Parser lex a -> [lex] -> Either String (a, [lex])
-runParser = undefined
+runParser p ls = runIdentity $ runErrorT $ runStateT (run p) ls
 
 evalParser :: Parser lex a -> [lex] -> Either String a
-evalParser = undefined
+evalParser p ls = case runParser p ls of
+	Left e -> Left e
+	Right (v, _) -> Right v
 
 satisfy :: (lex -> Bool) -> Parser lex lex
-satisfy = undefined
+satisfy p = Parser $ do
+	ls <- get
+	case ls of
+		[] -> throwError "end of file"
+		(l:ls') -> do
+			if p l
+			then do
+				put ls'
+				return l
+			else do
+				throwError "predicate is not true"
 
 eof :: Parser lex ()
-eof = undefined
+eof = Parser $ do
+	ls <- get
+	case ls of
+		[] -> return ()
+		_ -> throwError "not end of file"
 
 parserTestOK :: (Eq a, Show a, Eq lex, Show lex) => Parser lex a -> [lex] -> (a, [lex]) -> Test
 parserTestOK p s r = runParser p s ~?= Right r
